@@ -4,6 +4,7 @@ const jwt=require('jsonwebtoken');
 const roleControllers=require('../../controllers/roleControllers');
 const userControllers=require('../../controllers/userControllers');
 const communityControllers=require('../../controllers/communityControllers');
+const memberControllers=require('../../controllers/memberControllers');
 
 // Middleware to verify JWT token
 function verifyToken(req, res, next) {
@@ -30,7 +31,7 @@ function verifyToken(req, res, next) {
       }
     //   console.log(decoded);
       req.id = decoded.user.id;
-      console.log(req.id,'Req');
+      // console.log(req.id,'Req');
       next();
     });
   }
@@ -42,5 +43,11 @@ router.post('/auth/signin', userControllers.signin);
 router.get('/auth/me', verifyToken, userControllers.userinfo);
 router.post('/community', verifyToken, communityControllers.create);
 router.get('/community', communityControllers.getAllCommunities);
+
+router.get('/community/me/owner', verifyToken, communityControllers.getOwnedCommunities);
+router.get('/community/me/member', verifyToken, communityControllers.getMemberCommunities);
+router.post('/member', verifyToken, memberControllers.addMember);
+router.delete('/member/:id', verifyToken, memberControllers.removeMember);
+
 
 module.exports=router;
