@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt=require('jsonwebtoken');
 const roleControllers=require('../../controllers/roleControllers');
 const userControllers=require('../../controllers/userControllers');
+const communityControllers=require('../../controllers/communityControllers');
 
 // Middleware to verify JWT token
 function verifyToken(req, res, next) {
@@ -39,5 +40,7 @@ router.post('/role', roleControllers.create);
 router.post('/auth/signup', userControllers.signup);
 router.post('/auth/signin', userControllers.signin);
 router.get('/auth/me', verifyToken, userControllers.userinfo);
+router.post('/community', verifyToken, communityControllers.create);
+router.get('/community', communityControllers.getAllCommunities);
 
 module.exports=router;

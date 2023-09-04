@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User=require('./User');
 
 // Define the Snowflake library for generating IDs
 const Snowflake = require('@theinternetfolks/snowflake'); // Replace with the actual library
@@ -20,8 +21,8 @@ const communitySchema = new mongoose.Schema({
     maxlength: 255,
   },
   owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Reference the User model
+    type: String,
+    ref: User, // Reference the User model
   },
   created_at: {
     type: Date,
