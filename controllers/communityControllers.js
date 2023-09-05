@@ -81,12 +81,12 @@ module.exports.create = async(req, res) => {
 module.exports.getAllMembers = async (req, res) => {
   const name=req.params.id;
 
-  console.log("name", name);
+  // console.log("name", name);
 
   const page = req.query.page || 1; // Get the page number from the query string (default to 1)
   const perPage = 10; // Number of documents per page
 
-  try {
+  // try {
     // Find the user's joined communities with pagination
     const communities = await Community.find({ name });
       
@@ -105,6 +105,8 @@ module.exports.getAllMembers = async (req, res) => {
 
       const member = await Member.findOne({community:id}).skip((page - 1) * perPage)
                                                       .limit(perPage) 
+
+      if(!member) continue;                                         
   
       const user = await User.findOne({id: member.user});
       const role = await Role.findOne({id: member.role});
@@ -134,10 +136,10 @@ module.exports.getAllMembers = async (req, res) => {
         data: modifiedMembers,
       },
     });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: false, message: 'Internal Server Error' , error});
-  }
+  // } catch (error) {
+  //   console.error(error);
+  //   return res.status(500).json({ status: false, message: 'Internal Server Error' , error});
+  // }
 
   
 }

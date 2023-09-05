@@ -56,5 +56,8 @@ router.get('/community/me/member', verifyToken, communityControllers.getMemberCo
 router.post('/member', verifyToken, memberControllers.addMember);
 router.delete('/member/:id', verifyToken, memberControllers.removeMember);
 
+router.get('*', (req, res) =>{
+  res.status(404).json({ status: false, message: 'Page not found' });
+})
 
 module.exports=router;
