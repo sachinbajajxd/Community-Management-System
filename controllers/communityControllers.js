@@ -78,6 +78,70 @@ module.exports.create = async(req, res) => {
 
 }
 
+module.exports.getAllMembers = async (req, res) => {
+  const name=req.params.id;
+
+  console.log("name", name);
+
+  const page = req.query.page || 1; // Get the page number from the query string (default to 1)
+  const perPage = 10; // Number of documents per page
+
+  try {
+    // Find the user's joined communities with pagination
+    const communities = await Community.find({ name });
+      
+    // Count the total number of joined communities
+    const total = communities.length;
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(total / perPage);
+
+
+    const modifiedMembers = [];
+
+
+    for (const community of communities) {
+      const id = community.id;
+
+      const member = await Member.findOne({community:id}).skip((page - 1) * perPage)
+                                                      .limit(perPage) 
+  
+      const user = await User.findOne({id: member.user});
+      const role = await Role.findOne({id: member.role});
+
+      
+      modifiedMembers.push({
+          ...member.toObject(), // Convert the Mongoose document to a plain object
+          user: {
+              id: member.user,
+              name:user.name
+          } ,
+          role: {
+            id: member.role,
+            name: role.name
+          }
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      content: {
+        meta: {
+          total,
+          pages: totalPages,
+          page: +page,
+        },
+        data: modifiedMembers,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: 'Internal Server Error' , error});
+  }
+
+  
+}
+
 module.exports.getAllCommunities = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Current page number (default: 1)
     const perPage = 10; // Number of documents per page
@@ -145,11 +209,62 @@ module.exports.getOwnedCommunities = async(req, res) => {
             }
         });
     }catch(err){
-        return res.status(500).json({err, message: "Internal Server error"});
+        return res.status(500).json({status: false, err, message: "Internal Server error"});
     }
 
 }
 
 module.exports.getMemberCommunities = async(req, res) => {
+  const userId = req.id;
+  const page = req.query.page || 1; // Get the page number from the query string (default to 1)
+  const perPage = 10; // Number of documents per page
+
+  try {
+    // Find the user's joined communities with pagination
+    const joinedCommunities = await Member.find({ user: userId })
+      
+
+
+    // Count the total number of joined communities
+    const total = joinedCommunities.length;
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(total / perPage);
+
+
+    const modifiedCommunities = [];
+
+    for (const member of joinedCommunities) {
+      const comm = member.community;
+      
+      const community = await Community.findOne({id: comm}).skip((page - 1) * perPage)
+                                                           .limit(perPage) 
   
+      const owner = await User.findOne({id: community.owner});
+      
+      modifiedCommunities.push({
+          ...community.toObject(), // Convert the Mongoose document to a plain object
+          owner: {
+              id: community.owner,
+              name:owner.name
+          } 
+      });
+    }
+
+    return res.status(200).json({
+      status: true,
+      content: {
+        meta: {
+          total,
+          pages: totalPages,
+          page: +page,
+        },
+        data: modifiedCommunities,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: 'Internal Server Error', error });
+  }
+
 }

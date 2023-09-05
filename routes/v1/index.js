@@ -36,16 +36,23 @@ function verifyToken(req, res, next) {
     });
   }
 
+//ROLE
 router.get('/role', roleControllers.getAll);
 router.post('/role', roleControllers.create);
+
+//USER AUTH
 router.post('/auth/signup', userControllers.signup);
 router.post('/auth/signin', userControllers.signin);
 router.get('/auth/me', verifyToken, userControllers.userinfo);
+
+//COMMUNITY
 router.post('/community', verifyToken, communityControllers.create);
 router.get('/community', communityControllers.getAllCommunities);
-
+router.get('/community/:id/members', communityControllers.getAllMembers);
 router.get('/community/me/owner', verifyToken, communityControllers.getOwnedCommunities);
 router.get('/community/me/member', verifyToken, communityControllers.getMemberCommunities);
+
+//MEMBER
 router.post('/member', verifyToken, memberControllers.addMember);
 router.delete('/member/:id', verifyToken, memberControllers.removeMember);
 

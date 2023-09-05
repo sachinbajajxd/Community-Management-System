@@ -8,11 +8,18 @@ const {Snowflake} = require('@theinternetfolks/snowflake');
 module.exports.addMember = async(req, res) => {
 
     async function getRoleId(){
-        let name="Community Admin";
+        const name="Community Admin";
         const roleId=await Role.findOne({name});
 
-        // console.log(roleId.id, "Role id");
-        //TODO handle the case if roleId is null
+        if(!roleId){
+          const role = new Role({
+            id: Snowflake.generate(),
+            name,
+          });
+          await role.save();
+
+          return role.id;
+        }
         return roleId.id;
     }
 
