@@ -1,5 +1,15 @@
 ﻿# Community-Management-System
 
+ # Getting started
+
+To get started with this project, follow these steps:
+
+1. Clone the Repository
+2. Install all the dependencies using "npm install"
+3. Start the project using "npm start"
+4. I have deployed this project on render.com you make API requests from postman on this URL: https://community-management-system.onrender.com
+
+
 # API Endpoints
 
 **Role**
